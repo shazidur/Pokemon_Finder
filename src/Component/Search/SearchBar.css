@@ -1,0 +1,14 @@
+.searchBar {
+  width: 70% !important;
+  height: 40px;
+  border: 1px solid #efefef !important;
+  border-radius: 40px !important;
+  padding-left: 19px !important;
+  margin: 20px;
+}
+
+.searchButton {
+  color: #4f68ec;
+  cursor: pointer;
+  font-size: 13px;
+}
