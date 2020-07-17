@@ -31,45 +31,29 @@ class Home extends Component<HomeProps, HomeState> {
   }
 
   componentDidMount() {
-    this.getListOfPokemon();
+    // this.getDataFromAPI();
   }
 
-  getListOfPokemon() {
-    let names = [] as any;
-    fetch(baseAPI).then((res) => {
-      if (res.status !== 200) {
-        this.setState({ error: true });
-        return;
-      }
-      res.json().then((data) => {
-        data.results.map((name: any) => {
-          names.push(name.name);
-        });
-        this.setState({ error: false });
-        this.getDetailsOfPokemon(names);
-      });
-    });
-  }
+  // async getDataFromAPI() {
+  //   let response1 = await fetch(baseAPI);
+  //   let json = await response1.json();
+  //   let pokemonNames = await json.results;
+  //   let names = [] as any;
+  //   pokemonNames.map((name: any) => {
+  //     names.push(name.name);
+  //     this.getDetailsOfPokemon(names);
+  //   });
+  // }
 
-  getDetailsOfPokemon(names: any) {
-    let listOfPokemon = [] as any;
-    names.map((name: any) => {
-      fetch(`${baseAPI}${name}`).then((res) => {
-        if (res.status !== 200) {
-          this.setState({ error: true });
-          return;
-        }
-        res.json().then((data) => {
-          listOfPokemon.push(data);
-          this.setState({
-            error: false,
-            listOfPokemon: listOfPokemon,
-            isLoaded: false,
-          });
-        });
-      });
-    });
-  }
+  // async getDetailsOfPokemon(names: any) {
+  //   let listOfPokemon = [] as any;
+  //   let getName = names.map((name: string) => {
+  //     return name;
+  //   });
+
+  //   let response = await fetch(`${baseAPI}${getName} `);
+  //   let pokemon = await response.json();
+  // }
 
   deleteHandler = (index: number): void => {
     const items = [...this.state.listOfPokemon];
@@ -79,47 +63,49 @@ class Home extends Component<HomeProps, HomeState> {
 
   changeHandler = (e: React.FormEvent<HTMLInputElement>): void => {
     const { value }: any = e.target;
-    console.log(" inchange ", value);
     this.setState({
       search: value.toLowerCase(),
     });
   };
 
-  // searchClick = (
-  //   e: React.MouseEvent<HTMLParagraphElement, MouseEvent>
-  // ): void => {
-  //   let listOfPokemon = [] as any;
-  //   const inputValue = this.state.search;
-  //   fetch(`${baseAPI}${inputValue}`).then((res) => {
-  //     this.setState({ isLoaded: true });
-  //     if (res.status !== 200) {
-  //       this.setState({
-  //         error: true,
-  //         isLoaded: false,
-  //         listOfPokemon: [],
-  //       });
-  //       return;
-  //     }
-  //     res.json().then((data) => {
-  //       listOfPokemon.push(data);
-  //       this.setState({
-  //         error: false,
-  //         isLoaded: false,
-  //         listOfPokemon: listOfPokemon,
-  //       });
-  //     });
-  //   });
-  // };
+  searchClick = (
+    e: React.MouseEvent<HTMLParagraphElement, MouseEvent>
+  ): void => {
+    this.getData()
+      .then((data) => {
+        this.setState({
+          listOfPokemon: data,
+          isLoaded: false,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        this.setState({
+          error: true,
+          isLoaded: false,
+          listOfPokemon: [],
+        });
+      });
+  };
+
+  async getData() {
+    let listOfPokemon = [] as any;
+    const inputValue = this.state.search;
+    let response = await fetch(`${baseAPI}${inputValue}`);
+    let searchItem = [await response.json()];
+    return searchItem;
+  }
 
   render(): JSX.Element {
     let { listOfPokemon } = this.state;
 
-    let searchItem = listOfPokemon.filter((search: any) => {
-      return (
-        search.id.toString().indexOf(this.state.search) !== -1 ||
-        search.name.indexOf(this.state.search.toLowerCase()) !== -1
-      );
-    });
+    // let searchItem = listOfPokemon.filter((search: any) => {
+    //   return (
+    //     search.id.toString().indexOf(this.state.search) !== -1 ||
+    //     search.name.indexOf(this.state.search.toLowerCase()) !== -1
+    //   );
+    // });
 
     return (
       <div className="App">
@@ -130,14 +116,14 @@ class Home extends Component<HomeProps, HomeState> {
         <SearchBar
           changeHandler={this.changeHandler}
           search={this.state.search}
-          // searchButton={this.searchClick}
+          searchButton={this.searchClick}
         />
 
         <ErrorMessage error={this.state.error} loading={this.state.isLoaded} />
         {listOfPokemon.length !== 0 && (
           <Lists
             key={StringUtils.GenUUID()}
-            searchItem={searchItem}
+            searchItem={listOfPokemon}
             deleteHandler={this.deleteHandler}
           />
         )}

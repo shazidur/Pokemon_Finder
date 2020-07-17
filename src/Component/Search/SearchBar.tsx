@@ -6,7 +6,7 @@ import { SearchOutlined } from "@ant-design/icons";
 interface SearchBarProps {
   changeHandler: Function;
   search: any;
-  // searchButton: any;
+  searchButton: any;
 }
 
 class SearchBar extends React.Component<SearchBarProps> {
@@ -19,7 +19,11 @@ class SearchBar extends React.Component<SearchBarProps> {
         onChange={(event: any) => this.props.changeHandler(event)}
         type="text"
         value={this.props.search}
-        suffix={<span className={"searchButton"}>SEARCH</span>}
+        suffix={
+          <span onClick={this.props.searchButton} className={"searchButton"}>
+            SEARCH
+          </span>
+        }
       />
     );
   }
