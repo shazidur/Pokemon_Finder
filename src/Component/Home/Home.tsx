@@ -30,6 +30,8 @@ class Home extends Component<HomeProps, HomeState> {
     };
   }
 
+  // this is the new test for the Jenkins Push
+
   componentDidMount() {
     // this.getDataFromAPI();
   }
